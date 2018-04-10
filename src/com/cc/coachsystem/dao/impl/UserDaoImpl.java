@@ -260,19 +260,87 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public void takecourse(Course c, User u) {
-		
+		String sql = "insert into user_course(userid,courseid) value(?,?)";
+		Connection conn = null;
+		PreparedStatement pst = null;
+		conn = DBUtil.getConnection();
+		try {
+			pst = conn.prepareStatement(sql);
+			pst.setInt(1, u.getUserid());
+			pst.setInt(2, c.getCourseid());
+			pst.executeUpdate();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally{
+			if(pst!=null) {
+				try {
+					pst.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(conn!=null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	@Override
 	public boolean istookCourse(Course c, User u) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public List<User> getUsersByCourse(int courseid) {
-		// TODO Auto-generated method stub
-		return null;
+		List<User> list = new ArrayList<User>();
+		String sql = "select u.* from user u,user_course uc where u.userid=uc.userid and uc.courseid=?";
+		Connection conn = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		conn = DBUtil.getConnection();
+		try {
+			pst = conn.prepareStatement(sql);
+			pst.setInt(1, courseid);
+			rs = pst.executeQuery();
+			while(rs.next()) {
+				User u = new User();
+				u.setUserid(rs.getInt("userid"));
+				u.setUsername(rs.getString("username"));
+				u.setPassword(rs.getString("password"));
+				u.setName(rs.getString("name"));
+				u.setPhone(rs.getString("phone"));
+				list.add(u);
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if(rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(pst!=null) {
+				try {
+					pst.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(conn!=null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
 	}
 
 	

@@ -9,6 +9,13 @@ public class Course {
 	private String place;
 	private String content;
 	private boolean pass;
+	private boolean entered;
+	public boolean isEntered() {
+		return entered;
+	}
+	public void setEntered(boolean entered) {
+		this.entered = entered;
+	}
 	public boolean isPass() {
 		return pass;
 	}

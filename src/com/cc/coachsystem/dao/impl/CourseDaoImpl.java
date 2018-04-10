@@ -4,9 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cc.coachsystem.beans.Coach;
 import com.cc.coachsystem.beans.Course;
 import com.cc.coachsystem.dao.CourseDao;
 import com.cc.coachsystem.utils.DBUtil;
@@ -14,17 +16,53 @@ import com.cc.coachsystem.utils.DBUtil;
 public class CourseDaoImpl implements CourseDao {
 
 	@Override
-	public void add(Course c) {
+	public int add(Course c) {
 		String sql = "insert into course(time,place,content,pass) values(?,?,?,?)";
 		Connection conn = null;
 		PreparedStatement pst = null;
 		conn = DBUtil.getConnection();
 		try {
-			pst = conn.prepareStatement(sql);
+			pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			pst.setString(1, c.getTime());
 			pst.setString(2, c.getPlace());
 			pst.setString(3, c.getContent());
 			pst.setBoolean(4, c.isPass());
+			pst.executeUpdate();
+			ResultSet rs2 = pst.getGeneratedKeys();
+			if(rs2.next()) {
+				return rs2.getInt(1);
+			}
+			return -1;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally{
+			if(pst!=null) {
+				try {
+					pst.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(conn!=null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void connectcourseandcoach(Course c,Coach coach) {
+		String sql = "insert into coach_course(coachid,courseid) values(?,?)";
+		Connection conn = null;
+		PreparedStatement pst = null;
+		conn = DBUtil.getConnection();
+		try {
+			pst = conn.prepareStatement(sql);
+			pst.setInt(1, coach.getCoachid());
+			pst.setInt(2, c.getCourseid());
 			pst.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -161,7 +199,7 @@ public class CourseDaoImpl implements CourseDao {
 	@Override
 	public List<Course> getList(int pageIndex, int pageSize, int userid) {
 		List<Course> list = new ArrayList<Course>();
-		String sql = "select c.* from course c, user_course uc where uc.userid=? and uc.courseid=c.id limit ?,?";
+		String sql = "select c.*,(select count(*) from user_course uc where uc.userid=? and uc.courseid=c.courseid)>0 as entered from course c limit ?,?";
 		Connection conn = null;
 		PreparedStatement pst = null;
 		ResultSet rs = null;
@@ -179,6 +217,7 @@ public class CourseDaoImpl implements CourseDao {
 				c.setPass(rs.getBoolean("pass"));
 				c.setPlace(rs.getString("place"));
 				c.setTime(rs.getString("time"));
+				c.setEntered(rs.getBoolean("entered"));
 				list.add(c);
 			}
 		} catch (SQLException e) {
@@ -212,7 +251,7 @@ public class CourseDaoImpl implements CourseDao {
 	@Override
 	public List<Course> getListByCoach(int pageIndex, int pageSize, int coachid) {
 		List<Course> list = new ArrayList<Course>();
-		String sql = "select c.* from course c, coach_course cc where cc.coachid=? and cc.courseid=c.id limit ?,?";
+		String sql = "select c.* from course c, coach_course cc where cc.coachid=? and cc.courseid=c.courseid limit ?,?";
 		Connection conn = null;
 		PreparedStatement pst = null;
 		ResultSet rs = null;

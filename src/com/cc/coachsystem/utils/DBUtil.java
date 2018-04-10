@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBUtil {
-	private final static String jdbcurl = "jdbc:mysql://localhost:3306/sportsvolunteer";
+	private final static String jdbcurl = "jdbc:mysql://localhost:3306/coachsystem";
 	private final static String username = "root";
 	private final static String password = "root";
 	static {
