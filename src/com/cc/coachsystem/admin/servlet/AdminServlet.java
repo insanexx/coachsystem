@@ -102,7 +102,7 @@ public class AdminServlet extends HttpServlet {
 	}
 
 	private void userlist(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		List<User> list = uDao.getList(1, 9999);
+		List<User> list = uDao.getList(0, 9999);
 		request.setAttribute("list", list);
 		request.getRequestDispatcher("/jsp/admin/userlist.jsp").forward(request, response);
 		return;
