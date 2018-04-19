@@ -10,6 +10,13 @@ public class Course {
 	private String content;
 	private boolean pass;
 	private boolean entered;
+	private Coach coach;
+	public Coach getCoach() {
+		return coach;
+	}
+	public void setCoach(Coach coach) {
+		this.coach = coach;
+	}
 	public boolean isEntered() {
 		return entered;
 	}
@@ -47,18 +54,14 @@ public class Course {
 		this.content = content;
 	}
 	
-	public Course(int courseid, String time, String place, String content, boolean pass) {
-		super();
+	public Course(int courseid, String time, String place, String content, boolean pass, boolean entered, Coach coach) {
 		this.courseid = courseid;
 		this.time = time;
 		this.place = place;
 		this.content = content;
 		this.pass = pass;
-	}
-	@Override
-	public String toString() {
-		return "Course [courseid=" + courseid + ", time=" + time + ", place=" + place + ", content=" + content
-				+ ", pass=" + pass + "]";
+		this.entered = entered;
+		this.coach = coach;
 	}
 	public Course() {}
 }

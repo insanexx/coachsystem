@@ -93,7 +93,7 @@ public class CourseServlet extends HttpServlet {
 		String time = request.getParameter("time");
 		String place = request.getParameter("place");
 		String content = request.getParameter("content");
-		Course course = new Course(-1,time,place,content,false);
+		Course course = new Course(-1,time,place,content,false,false,null);
 		return course;
 	}
 

@@ -54,7 +54,7 @@
 		          <img src="${pageContext.request.contextPath }/img/3.png" alt="" class="mr-2 rounded">
 		          <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
 		            <div class="d-flex justify-content-between align-items-center w-100">
-		            	<span class="d-block">时间：${course.time }</span>
+		            	<span class="d-block">课程时间：${course.time }</span>
 		              <c:if test="${!course.entered }">
 			          	<a href="${pageContext.request.contextPath }/user/UserServlet?method=takecourse&courseid=${course.courseid}">预订</a>
 		              </c:if>
@@ -62,8 +62,10 @@
 		             	<a href="#">已预订</a>
 		              </c:if>
 		            </div>
-		            	<span class="d-block">地点：${course.place }</span>
-		            	<span class="d-block">内容：${course.content }</span>
+		            	<span class="d-block">课程地点：${course.place }</span>
+		            	<span class="d-block">课程简介：${course.content }</span>
+		            	<span class="d-block">课程教练：${course.coach.name }</span>
+	            		<span class="d-block">联系方式：${course.coach.phone }</span>
 		          </div>
 		        </div>
 	        </c:forEach>

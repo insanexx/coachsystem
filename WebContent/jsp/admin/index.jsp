@@ -64,6 +64,8 @@
 		            </div>
 	            	<span class="d-block">课程地点：${course.place }</span>
 	            	<span class="d-block">课程简介：${course.content }</span>
+	            	<span class="d-block">课程教练：${course.coach.name }</span>
+	            	<span class="d-block">联系方式：${course.coach.phone }</span>
 		            <div>
 		            	<br/>
 		            	 <a target="_blank" href="${pageContext.request.contextPath }/admin/AdminServlet?method=listuser&courseid=${course.courseid}">查看预订列表</a>

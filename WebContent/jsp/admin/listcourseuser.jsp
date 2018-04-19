@@ -92,6 +92,8 @@
 	            </div>
             	<span class="d-block">课程地点：${course.place }</span>
             	<span class="d-block">课程简介：${course.content }</span>
+            	<span class="d-block">课程教练：${course.coach.name }</span>
+	            <span class="d-block">联系方式：${course.coach.phone }</span>
 	          </div>
 	        </div>
 	        <c:forEach items="${list }" var="u">
