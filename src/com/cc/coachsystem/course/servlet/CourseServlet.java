@@ -17,7 +17,7 @@ import com.cc.coachsystem.dao.impl.CourseDaoImpl;
 @WebServlet("/course/CourseServlet")
 public class CourseServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private CourseDao csDao = new CourseDaoImpl();
+	private CourseDao courseDao = new CourseDaoImpl();
        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -51,7 +51,7 @@ public class CourseServlet extends HttpServlet {
 	
 	private void index(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Coach coach = (Coach) request.getSession().getAttribute("coach");
-		List<Course> courseList = csDao.getListByCoach(0, 1000, coach.getCoachid());
+		List<Course> courseList = courseDao.getListByCoach(0, 1000, coach.getCoachid());
 		request.getSession().setAttribute("courseList", courseList);
 		response.sendRedirect(request.getServletContext().getContextPath()+"/jsp/coach/index.jsp");
 		return;
@@ -60,7 +60,7 @@ public class CourseServlet extends HttpServlet {
 	private void deletecourse(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		try {
 			int id = Integer.parseInt(request.getParameter("courseid"));
-			csDao.delete(id);
+			courseDao.delete(id);
 			index(request, response);
 			return;
 		}catch (Exception e) {
@@ -76,9 +76,9 @@ public class CourseServlet extends HttpServlet {
 			Coach coach = (Coach) request.getSession().getAttribute("coach");
 			Course course = null;
 			course = createCourse(request);
-			int courseid = csDao.add(course);
+			int courseid = courseDao.add(course);
 			course.setCourseid(courseid);
-			csDao.connectcourseandcoach(course, coach);
+			courseDao.connectcourseandcoach(course, coach);
 			response.sendRedirect(request.getContextPath()+"/coach/CoachServlet?method=index");
 			return;
 		} catch (Exception e) {

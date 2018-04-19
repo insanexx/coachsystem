@@ -101,6 +101,12 @@
 		            </div>
 	            	<span class="d-block">课程地点：${course.place }</span>
 	            	<span class="d-block">课程简介：${course.content }</span>
+	            	<c:if test="${course.pass}">
+		            	<span class="d-block" style="color:green;">审核通过</span>
+	            	</c:if>
+	            	<c:if test="${!course.pass}">
+	            		<span class="d-block" style="color:red;">待审核</span>
+	            	</c:if>
 		            <div>
 		            	<br/>
 		            	 <a target="_blank" href="${pageContext.request.contextPath }/coach/CoachServlet?method=listuser&courseid=${course.courseid}">查看预订列表</a>

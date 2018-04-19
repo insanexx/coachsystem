@@ -26,10 +26,10 @@ import com.cc.coachsystem.utils.MD5Util;
 @WebServlet("/admin/AdminServlet")
 public class AdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private AdminDao aDao = new AdminDaoImpl();
-	private UserDao uDao = new UserDaoImpl();
-	private CoachDao cDao = new CoachDaoImpl();
-	private CourseDao csDao = new CourseDaoImpl();
+	private AdminDao adminDao = new AdminDaoImpl();
+	private UserDao userDao = new UserDaoImpl();
+	private CoachDao coachDao = new CoachDaoImpl();
+	private CourseDao courseDao = new CourseDaoImpl();
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
@@ -66,16 +66,27 @@ public class AdminServlet extends HttpServlet {
 		case "index":
 			index(request,response);
 			break;
+		case "check":
+			check(request,response);
+			break;
 		default:
 			break;
 		}
 	}
+	//审核
+	private void check(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		int courseid = Integer.parseInt(request.getParameter("courseid"));
+		Course course = courseDao.getById(courseid);
+		course.setPass(true);
+		courseDao.update(course);
+		response.sendRedirect(request.getContextPath()+"/admin/AdminServlet?method=index");
+	}
 	//查看课程预订列表
 	private void listuser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int courseid = Integer.parseInt(request.getParameter("courseid"));
-		List<User> list = uDao.getUsersByCourse(courseid);
+		List<User> list = userDao.getUsersByCourse(courseid);
 		request.setAttribute("list", list);
-		Course course = csDao.getById(courseid);
+		Course course = courseDao.getById(courseid);
 		request.setAttribute("course", course);
 		request.getRequestDispatcher("/jsp/admin/listcourseuser.jsp").forward(request, response);
 		return;
@@ -85,24 +96,24 @@ public class AdminServlet extends HttpServlet {
 		Admin admin = (Admin) request.getSession().getAttribute("admin");
 		if(admin==null) {
 			request.setAttribute("message", "你还没有登录");
-			request.getRequestDispatcher("/jsp/admin.jsp").forward(request, response);
+			request.getRequestDispatcher("/jsp/admin/admin.jsp").forward(request, response);
 			return;
 		}
-		List<Course> courseList = csDao.getList(0, 1000);
+		List<Course> courseList = courseDao.getList(0, 1000);
 		request.getSession().setAttribute("courseList", courseList);
 		request.getRequestDispatcher("/jsp/admin/index.jsp").forward(request, response);
 		return;
 	}
 
 	private void coachlist(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		List<Coach> list = cDao.getAll();
+		List<Coach> list = coachDao.getAll();
 		request.setAttribute("list", list);
 		request.getRequestDispatcher("/jsp/admin/coachlist.jsp").forward(request, response);
 		return;
 	}
 
 	private void userlist(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		List<User> list = uDao.getList(0, 9999);
+		List<User> list = userDao.getList(0, 9999);
 		request.setAttribute("list", list);
 		request.getRequestDispatcher("/jsp/admin/userlist.jsp").forward(request, response);
 		return;
@@ -127,7 +138,7 @@ public class AdminServlet extends HttpServlet {
 			request.getRequestDispatcher("/jsp/admin/login.jsp").forward(request, response);
 			return;
 		}
-		Admin admin = aDao.getByIdAndPassword(adminid, MD5Util.getMD5(password));
+		Admin admin = adminDao.getByIdAndPassword(adminid, MD5Util.getMD5(password));
 		if(admin==null) {
 			request.setAttribute("message", "管理员id或者密码输入错误");
 			request.getRequestDispatcher("/jsp/admin/login.jsp").forward(request, response);

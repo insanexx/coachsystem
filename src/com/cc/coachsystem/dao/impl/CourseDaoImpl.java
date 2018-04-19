@@ -197,9 +197,9 @@ public class CourseDaoImpl implements CourseDao {
 	}
 
 	@Override
-	public List<Course> getList(int pageIndex, int pageSize, int userid) {
+	public List<Course> getList(int pageIndex, int pageSize, int userid,boolean pass) {
 		List<Course> list = new ArrayList<Course>();
-		String sql = "select c.*,(select count(*) from user_course uc where uc.userid=? and uc.courseid=c.courseid)>0 as entered from course c limit ?,?";
+		String sql = "select c.*,(select count(*) from user_course uc where uc.userid=? and uc.courseid=c.courseid and c.pass=?)>0 as entered from course c where c.pass=? limit ?,?";
 		Connection conn = null;
 		PreparedStatement pst = null;
 		ResultSet rs = null;
@@ -207,8 +207,10 @@ public class CourseDaoImpl implements CourseDao {
 		try {
 			pst = conn.prepareStatement(sql);
 			pst.setInt(1, userid);
-			pst.setInt(2, pageIndex);
-			pst.setInt(3, pageSize);
+			pst.setBoolean(2, pass);
+			pst.setBoolean(3, pass);
+			pst.setInt(4, pageIndex);
+			pst.setInt(5, pageSize);
 			rs = pst.executeQuery();
 			while(rs.next()) {
 				Course c = new Course();
@@ -298,6 +300,58 @@ public class CourseDaoImpl implements CourseDao {
 		}
 		return list;
 	}
+	
+	@Override
+	public List<Course> getListByCoach(int pageIndex, int pageSize, int coachid,boolean pass) {
+		List<Course> list = new ArrayList<Course>();
+		String sql = "select c.* from course c, coach_course cc where cc.coachid=? and cc.courseid=c.courseid and c.pass=? limit ?,?";
+		Connection conn = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		conn = DBUtil.getConnection();
+		try {
+			pst = conn.prepareStatement(sql);
+			pst.setInt(1, coachid);
+			pst.setInt(2, pageIndex);
+			pst.setBoolean(3, pass);
+			pst.setInt(4, pageSize);
+			rs = pst.executeQuery();
+			while(rs.next()) {
+				Course c = new Course();
+				c.setContent(rs.getString("content"));
+				c.setCourseid(rs.getInt("courseid"));
+				c.setPass(rs.getBoolean("pass"));
+				c.setPlace(rs.getString("place"));
+				c.setTime(rs.getString("time"));
+				list.add(c);
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if(rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(pst!=null) {
+				try {
+					pst.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(conn!=null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
+	}
 
 	@Override
 	public List<Course> getList(int pageIndex, int pageSize) {
@@ -311,6 +365,57 @@ public class CourseDaoImpl implements CourseDao {
 			pst = conn.prepareStatement(sql);
 			pst.setInt(1, pageIndex);
 			pst.setInt(2, pageSize);
+			rs = pst.executeQuery();
+			while(rs.next()) {
+				Course c = new Course();
+				c.setContent(rs.getString("content"));
+				c.setCourseid(rs.getInt("courseid"));
+				c.setPass(rs.getBoolean("pass"));
+				c.setPlace(rs.getString("place"));
+				c.setTime(rs.getString("time"));
+				list.add(c);
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if(rs!=null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(pst!=null) {
+				try {
+					pst.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if(conn!=null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
+	}
+	
+	@Override
+	public List<Course> getList(int pageIndex, int pageSize,boolean pass) {
+		List<Course> list = new ArrayList<Course>();
+		String sql = "select * from course where pass=? limit ?,?";
+		Connection conn = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		conn = DBUtil.getConnection();
+		try {
+			pst = conn.prepareStatement(sql);
+			pst.setBoolean(1, pass);
+			pst.setInt(2, pageIndex);
+			pst.setInt(3, pageSize);
 			rs = pst.executeQuery();
 			while(rs.next()) {
 				Course c = new Course();

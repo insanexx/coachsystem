@@ -25,7 +25,7 @@ public class CoachServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private CoachDao coachDao = new CoachDaoImpl();
 	private UserDao userDao = new UserDaoImpl();
-	private CourseDao csDao = new CourseDaoImpl();
+	private CourseDao courseDao = new CourseDaoImpl();
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -71,7 +71,7 @@ public class CoachServlet extends HttpServlet {
 			request.getRequestDispatcher("/jsp/message.jsp").forward(request, response);
 			return;
 		}
-		List<Course> courseList = csDao.getListByCoach(0, 999, coach.getCoachid());
+		List<Course> courseList = courseDao.getListByCoach(0, 999, coach.getCoachid());
 		request.getSession().setAttribute("courseList", courseList);
 		request.getRequestDispatcher("/jsp/coach/index.jsp").forward(request, response);
 		return;
@@ -81,7 +81,7 @@ public class CoachServlet extends HttpServlet {
 		int courseid = Integer.parseInt(request.getParameter("courseid"));
 		List<User> list = userDao.getUsersByCourse(courseid);
 		request.setAttribute("list", list);
-		Course course = csDao.getById(courseid);
+		Course course = courseDao.getById(courseid);
 		request.setAttribute("course", course);
 		request.getRequestDispatcher("/jsp/coach/listcourseuser.jsp").forward(request, response);
 		return;

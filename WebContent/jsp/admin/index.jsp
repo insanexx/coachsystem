@@ -55,6 +55,12 @@
 		          <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
 		            <div class="d-flex justify-content-between align-items-center w-100">
 		              <span class="d-block">课程时间：${course.time }</span>
+		              <c:if test="${!course.pass }">
+			          	<a href="${pageContext.request.contextPath }/admin/AdminServlet?method=check&courseid=${course.courseid}" style="color:red;">审核</a>
+		              </c:if>
+		              <c:if test="${course.pass }">
+		             	<a href="#" style="color:green;">已审核</a>
+		              </c:if>
 		            </div>
 	            	<span class="d-block">课程地点：${course.place }</span>
 	            	<span class="d-block">课程简介：${course.content }</span>
@@ -68,10 +74,6 @@
 	      </div>
       </div>
     </main>
-
-    <footer class="container">
-      <p>&copy; Company 2017-2018</p>
-    </footer>
 
    <script src="${pageContext.request.contextPath }/jquery-3.1.0/jquery-3.2.1.slim.min.js"></script>
    <script src="${pageContext.request.contextPath }/bootstrap-4.0.0-dist/js/bootstrap.min.js"></script>

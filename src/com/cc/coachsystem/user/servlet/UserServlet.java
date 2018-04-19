@@ -21,7 +21,7 @@ import com.cc.coachsystem.utils.MD5Util;
 public class UserServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private UserDao userDao = new UserDaoImpl();
-	private CourseDao cDao = new CourseDaoImpl();
+	private CourseDao courseDao = new CourseDaoImpl();
        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
@@ -66,7 +66,7 @@ public class UserServlet extends HttpServlet {
 			request.getRequestDispatcher("/jsp/message.jsp").forward(request, response);
 			return;
 		}
-		List<Course> courseList = cDao.getList(0, 1000,user.getUserid());
+		List<Course> courseList = courseDao.getList(0, 1000,user.getUserid(),true);
 		request.getSession().setAttribute("courseList", courseList);
 		request.getRequestDispatcher("/jsp/user/index.jsp").forward(request, response);
 		return;
@@ -76,7 +76,7 @@ public class UserServlet extends HttpServlet {
 		try {
 			User u = (User) request.getSession().getAttribute("user");
 			int courseid = Integer.parseInt(request.getParameter("courseid"));
-			Course course = cDao.getById(courseid);
+			Course course = courseDao.getById(courseid);
 			if(userDao.istookCourse(course, u)) {
 				request.setAttribute("message", "你已经预定过了，请勿重复预定");
 				request.getRequestDispatcher("/jsp/user/index.jsp").forward(request, response);
